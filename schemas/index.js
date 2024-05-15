@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const connect = () => {
   mongoose
-    .connect(
-      'mongodb+srv://tmdwnsasa12:RBaniXdX5DYkTdD4@express-mongo.d3cxkpb.mongodb.net/?retryWrites=true&w=majority&appName=express-mongo',
-      {
-        dbName: 'character', // todo_memo 데이터베이스명을 사용합니다.
-      },
-    )
+    .connect(process.env.MONGOKEY, {
+      dbName: 'character', // todo_memo 데이터베이스명을 사용합니다.
+    })
     .then(() => console.log('MongoDB 연결에 성공하였습니다.'))
     .catch((err) => console.log(`MongoDB 연결에 실패하였습니다. ${err}`));
 };
