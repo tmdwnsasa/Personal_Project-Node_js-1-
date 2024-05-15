@@ -1,12 +1,12 @@
-// /app.js
-
-import express from "express";
-import connect from "./schemas/index.js";
-import TodosRouter from "./routes/todos.router.js";
-import ErrorHandlerMiddleware from "./middlewares/error-handler.middleware.js";
+import express from 'express';
+import connect from './schemas/index.js';
+import characterRouter from './routes/character.router.js';
+import itemRouter from './routes/item.router.js';
+import ErrorHandlerMiddleware from './middlewares/error-handler.middleware.js';
 
 const app = express();
 const PORT = 3000;
+const router = express.Router();
 
 connect();
 
@@ -15,24 +15,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  console.log("Resquest URL:", req.originalUrl, "-", new Date());
+  console.log('Request URL:', req.originalUrl, '-', new Date());
   next();
 });
-// static Middleware, express.static()을 사용하여 정적 파일을 제공합니다.
-app.use(express.static("./assets"));
 
-const router = express.Router();
-
-router.get("/", (req, res) => {
-  return res.json({ message: "Hi!" });
+app.get('/', (req, res) => {
+  return res.json({ message: 'Hi!' });
 });
 
 // /api 주소로 접근하였을 때, router와 TodosRouter로 클라이언트의 요청이 전달됩니다.
-app.use("/api", [router, TodosRouter]);
+app.use('/characterAPI', [router, characterRouter]);
+app.use('/itemAPI', [router, itemRouter]);
 
 // 에러 핸들링 미들웨어를 등록합니다.
 app.use(ErrorHandlerMiddleware);
 
 app.listen(PORT, () => {
-  console.log(PORT, "포트로 서버가 열렸어요!");
+  console.log(PORT, '포트로 서버가 열렸어요!');
 });
