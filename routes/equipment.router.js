@@ -10,7 +10,7 @@ router.get('/equip/:character_ID', async (req, res, next) => {
 
   const validateCode = await Equipment.findOne({ character_ID: character_ID }).exec();
   if (!validateCode) {
-    return res.status(400).json({ errorMessage: '없는 케릭터에게는 장착할 수 없습니다.' });
+    return res.status(404).json({ errorMessage: '없는 케릭터에게는 장착할 수 없습니다.' });
   }
 
   return res.status(200).json({ validateCode });
@@ -25,14 +25,14 @@ router.patch('/equip/:character_ID', async (req, res, next) => {
   const validateCode = await Equipment.findOne({ character_ID: character_ID }).exec();
 
   if (!validateItem) {
-    return res.status(400).json({ errorMessage: '없는 아이템은 장착할 수 없습니다.' });
+    return res.status(404).json({ errorMessage: '없는 아이템은 장착할 수 없습니다.' });
   }
   if (!validateCode) {
-    return res.status(400).json({ errorMessage: '없는 케릭터에게는 장착할 수 없습니다.' });
+    return res.status(404).json({ errorMessage: '없는 케릭터에게는 장착할 수 없습니다.' });
   }
   for (const i of validateCode.equipment) {
     if (i.item_code === validateItem.item_code) {
-      return res.status(400).json({ errorMessage: '이미 장착한 아이템입니다.' });
+      return res.status(404).json({ errorMessage: '이미 장착한 아이템입니다.' });
     }
   }
 
@@ -55,14 +55,14 @@ router.patch('/unequip/:character_ID', async (req, res) => {
   const validateCode = await Equipment.findOne({ character_ID: character_ID }).exec();
 
   if (!validateItem) {
-    return res.status(400).json({ errorMessage: '없는 아이템은 장착해제 할 수 없습니다.' });
+    return res.status(404).json({ errorMessage: '없는 아이템은 장착해제 할 수 없습니다.' });
   }
   if (!validateCode) {
-    return res.status(400).json({ errorMessage: '없는 케릭터에게는 장착해제 할 수 없습니다.' });
+    return res.status(404).json({ errorMessage: '없는 케릭터에게는 장착해제 할 수 없습니다.' });
   }
 
   const equipedItemIndex = validateCode.equipment.findIndex((element) => element.item_code === validateItem.item_code);
-  if (equipedItemIndex === -1) return res.status(400).json({ errorMessage: '장착하지 않은 아이템을 장착해제 할 수 없습니다.' });
+  if (equipedItemIndex === -1) return res.status(404).json({ errorMessage: '장착하지 않은 아이템을 장착해제 할 수 없습니다.' });
   else {
     if (validateItem.item_stat.health) validateCharacter.health -= validateItem.item_stat.health;
     if (validateItem.item_stat.power) validateCharacter.power -= validateItem.item_stat.power;

@@ -27,11 +27,8 @@ router.post('/character', async (req, res, next) => {
 
     const character_ID = characterMaxId ? characterMaxId.character_ID + 1 : 1;
 
-    const health = 500;
-    const power = 100;
-
     // mongoose model
-    const character = new Character({ character_ID, name, health, power });
+    const character = new Character({ character_ID, name, health: 500, power: 100 });
     const equipment = new Equipment({ character_ID });
 
     await character.save();
@@ -83,7 +80,7 @@ router.patch('/characterEquip/:item_code', async (req, res) => {
 });
 
 router.delete('/character/:character_ID', async (req, res) => {
-  const character_ID = req.params.character_ID;
+  const { character_ID } = req.params;
 
   const character = await Character.findOne({ character_ID: character_ID }).exec();
 
