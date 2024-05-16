@@ -1,12 +1,13 @@
 import express from 'express';
 import Character from '../schemas/character.schema.js';
+import Equipment from '../schemas/equipment.schema.js';
 import Joi from 'joi';
 
 const router = express.Router();
 
 // 데이터 검증을 위한 Joi 스키마를 정의
 const createCharacterSchema = Joi.object({
-  name: Joi.string().min(1).max(20).required(),
+  name: Joi.string().required(),
 });
 
 router.post('/character', async (req, res, next) => {
@@ -31,8 +32,10 @@ router.post('/character', async (req, res, next) => {
 
     // mongoose model
     const character = new Character({ character_ID, name, health, power });
+    const equipment = new Equipment({ character_ID });
 
     await character.save();
+    await equipment.save();
 
     return res.status(201).json({ character });
   } catch (error) {
@@ -56,6 +59,27 @@ router.get('/character/:character_ID', async (req, res) => {
   };
 
   return res.status(200).json({ data });
+});
+
+router.patch('/characterEquip/:item_code', async (req, res) => {
+  const item_code = req.params.item_code;
+
+  const validateBody = await createFixItemSchema.validateAsync(req.body);
+  const { item_name, item_stat } = validateBody;
+
+  // 변경하려는 '해야할 일'을 가져옵니다. 만약, 해당 ID값을 가진 '해야할 일'이 없다면 에러를 발생시킵니다.
+  const currentData = await Item.findOne({ item_code: item_code }).exec();
+
+  if (!currentData) {
+    return res.status(404).json({ errorMessage: '존재하지 않는 코드입니다.' });
+  }
+  currentData.item_name = item_name;
+  currentData.item_stat = item_stat;
+
+  // 변경된 '해야할 일'을 저장합니다.
+  await currentData.save();
+
+  return res.status(200).json({});
 });
 
 router.delete('/character/:character_ID', async (req, res) => {

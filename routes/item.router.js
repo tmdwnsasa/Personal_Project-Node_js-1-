@@ -7,7 +7,7 @@ const router = express.Router();
 // Joi 스키마 Item 추가
 const createAddItemSchema = Joi.object({
   item_code: Joi.number().required(),
-  item_name: Joi.string().min(1).max(20).required(),
+  item_name: Joi.string().required(),
   item_stat: {
     health: Joi.number().required(),
     power: Joi.number().required(),
@@ -16,7 +16,7 @@ const createAddItemSchema = Joi.object({
 
 // Joi 스키마 Item 수정
 const createFixItemSchema = Joi.object({
-  item_name: Joi.string().min(1).max(20).required(),
+  item_name: Joi.string().required(),
   item_stat: {
     health: Joi.number(),
     power: Joi.number(),
@@ -45,20 +45,14 @@ router.post('/item', async (req, res, next) => {
     return res.status(201).json({ item });
   } catch (error) {
     // 에러 처리 미들웨어
-    console.log('ㄹㅇ?');
     next(error);
   }
 });
 
 router.get('/item', async (req, res) => {
-  const item = await Item.find().exec();
+  const item = await Item.find({}).select('item_code item_name -_id').exec();
 
-  const data = [];
-  for (const i of item) {
-    data.push({ item_code: i.item_code, item_name: i.item_name });
-  }
-  console.log(data);
-  return res.status(200).json({ data });
+  return res.status(200).json({ item });
 });
 
 router.get('/item/:item_code', async (req, res) => {
