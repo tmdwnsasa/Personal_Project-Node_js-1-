@@ -13,7 +13,7 @@ router.get('/equip/:character_ID', async (req, res, next) => {
     return res.status(400).json({ errorMessage: '없는 케릭터에게는 장착할 수 없습니다.' });
   }
 
-  return res.status(201).json({ validateCode });
+  return res.status(200).json({ validateCode });
 });
 
 router.patch('/equip/:character_ID', async (req, res, next) => {
@@ -43,7 +43,7 @@ router.patch('/equip/:character_ID', async (req, res, next) => {
   await validateCode.save();
   await validateCharacter.save();
 
-  return res.status(201).json({ validateCode });
+  return res.status(200).json({ validateCode });
 });
 
 router.patch('/unequip/:character_ID', async (req, res) => {
@@ -71,7 +71,7 @@ router.patch('/unequip/:character_ID', async (req, res) => {
   await validateCode.save();
   await validateCharacter.save();
 
-  return res.status(201).json({ validateCode });
+  return res.status(200).json({ validateCode });
 });
 
 export default router;
