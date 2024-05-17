@@ -58,27 +58,6 @@ router.get('/character/:character_ID', async (req, res) => {
   return res.status(200).json({ data });
 });
 
-router.patch('/characterEquip/:item_code', async (req, res) => {
-  const item_code = req.params.item_code;
-
-  const validateBody = await createFixItemSchema.validateAsync(req.body);
-  const { item_name, item_stat } = validateBody;
-
-  // 변경하려는 '해야할 일'을 가져옵니다. 만약, 해당 ID값을 가진 '해야할 일'이 없다면 에러를 발생시킵니다.
-  const currentData = await Item.findOne({ item_code: item_code }).exec();
-
-  if (!currentData) {
-    return res.status(404).json({ errorMessage: '존재하지 않는 코드입니다.' });
-  }
-  currentData.item_name = item_name;
-  currentData.item_stat = item_stat;
-
-  // 변경된 '해야할 일'을 저장합니다.
-  await currentData.save();
-
-  return res.status(200).json({});
-});
-
 router.delete('/character/:character_ID', async (req, res) => {
   const { character_ID } = req.params;
 
@@ -89,6 +68,7 @@ router.delete('/character/:character_ID', async (req, res) => {
   }
 
   await Character.deleteOne({ character_ID }).exec();
+  await Equipment.deleteOne({ character_ID }).exec();
 
   return res.status(200).json({});
 });
